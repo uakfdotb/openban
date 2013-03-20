@@ -24,6 +24,7 @@ if($action != "export") {
 $key = escape($_REQUEST['key']);
 $result = $db->query("SELECT id, ip, last_export FROM openban_keys WHERE k = '$key'");
 $last_time = 0;
+$new_time = time();
 
 if($row = $result->fetch_array()) {
 	//check IP
@@ -41,7 +42,7 @@ if($row = $result->fetch_array()) {
 		die("Error: exported too recently; limit set to $exportLimit/$exportLimitRolling (age: " . (time() - $row[2]) . ").");
 	}
 	
-	$db->query("UPDATE openban_keys SET last_export = " . time() . " WHERE id = '{$row[0]}'");
+	$db->query("UPDATE openban_keys SET last_export = $new_time WHERE id = '{$row[0]}'");
 } else {
 	die('Authentication failure (key).');
 }
@@ -56,10 +57,10 @@ $result = $db->query("SELECT IFNULL(MAX(banid), 0) FROM openban_cache");
 $row = $result->fetch_array();
 $last_id = $row[0];
 
-$db->query("INSERT INTO openban_cache (banid, time, status) SELECT id, '" . time() . "', 0 FROM bans WHERE id > $last_id AND (SELECT COUNT(*) FROM openban_cache WHERE bans.id = openban_cache.banid) = 0 AND openban_target IS NULL");
+$db->query("INSERT INTO openban_cache (banid, time, status) SELECT id, '$new_time', 0 FROM bans WHERE id > $last_id AND (SELECT COUNT(*) FROM openban_cache WHERE bans.id = openban_cache.banid) = 0 AND openban_target IS NULL");
 
 //delete stale entries (only deleted bans)
-$db->query("DELETE FROM openban_cache WHERE status = '1' AND time < '" . (time() - 3600 * 24 * 20) . "'");
+$db->query("DELETE FROM openban_cache WHERE status = '1' AND time < '" . ($new_time - 3600 * 24 * 20) . "'");
 
 //* get the new bans
 
@@ -71,7 +72,7 @@ if($last_time != 0) { //if they have updated already, only get new updates
 
 echo "*success:export\n";
 echo "*cols:id\tname\tserver\tip\treason\n";
-echo "*time:" . time() . "\n";
+echo "*time:$new_time\n";
 
 while($row = $result->fetch_row()) {
 	if($row[5] == 0) {
