@@ -68,7 +68,7 @@ $db->query("DELETE FROM openban_cache WHERE status = '1' AND time < '" . ($new_t
 $extendedSelect = "";
 
 if($extendedMode) {
-	$extendedSelect = ", gamename, admin, (expiredate - NOW()) / 60";
+	$extendedSelect = ", gamename, admin, TIMESTAMPDIFF(MINUTE, NOW(), expiredate)";
 }
 
 if($last_time != 0) { //if they have updated already, only get new updates
