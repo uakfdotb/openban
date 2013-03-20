@@ -81,6 +81,10 @@ while($row = $result->fetch_row()) {
 		$server = escapeBan($row[2]);
 		$ip = escapeBan($row[3]);
 		$reason = escapeBan($row[4]);
+		
+		if(empty($reason)) {
+			$reason = "none";
+		}
 	
 		echo "$id\t$name\t$server\t$ip\t$reason\n";
 	} else {
