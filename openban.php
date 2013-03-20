@@ -58,7 +58,7 @@ $result = $db->query("SELECT IFNULL(MAX(banid), 0) FROM openban_cache");
 $row = $result->fetch_array();
 $last_id = $row[0];
 
-$db->query("INSERT INTO openban_cache (banid, time, status) SELECT id, '$new_time', 0 FROM bans WHERE id > $last_id AND (SELECT COUNT(*) FROM openban_cache WHERE bans.id = openban_cache.banid) = 0 AND openban_target IS NULL AND (context = '' OR context = 'ttr.cloud')");
+$db->query("INSERT INTO openban_cache (banid, time, status) SELECT id, '$new_time', 0 FROM bans WHERE id > $last_id AND (SELECT COUNT(*) FROM openban_cache WHERE bans.id = openban_cache.banid) = 0 AND openban_target IS NULL");
 
 //delete stale entries (only deleted bans)
 $db->query("DELETE FROM openban_cache WHERE status = '1' AND time < '" . ($new_time - 3600 * 24 * 20) . "'");
@@ -72,9 +72,9 @@ if($extendedMode) {
 }
 
 if($last_time != 0) { //if they have updated already, only get new updates
-	$result = $db->query("SELECT banid, name, server, ip, reason, status$extendedSelect FROM openban_cache LEFT JOIN bans ON id = banid WHERE (status = 1 OR (expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL AND (context = '' OR context = 'ttr.cloud'))) AND time >= '$last_time'");
+	$result = $db->query("SELECT banid, name, server, ip, reason, status$extendedSelect FROM openban_cache LEFT JOIN bans ON id = banid WHERE (status = 1 OR (expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL)) AND time >= '$last_time'");
 } else {
-	$result = $db->query("SELECT id, name, server, ip, reason, 0$extendedSelect FROM bans WHERE expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL AND (context = '' OR context = 'ttr.cloud') ORDER BY id");
+	$result = $db->query("SELECT id, name, server, ip, reason, 0$extendedSelect FROM bans WHERE expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL ORDER BY id");
 }
 
 echo "*success:export\n";
