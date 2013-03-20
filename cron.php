@@ -72,9 +72,13 @@ while($row = $result->fetch_array()) {
 			
 			if(isset($columns['gamename'])) {
 				$gamename = escape($parts[$columns['gamename']]);
-			} else if(isset($columns['admin'])) {
+			}
+			
+			if(isset($columns['admin'])) {
 				$admin = escape($parts[$columns['admin']]);
-			} else if(isset($columns['duration']) && $columns['duration'] < $duration && is_numeric($columns['duration'])) {
+			}
+			
+			if(isset($columns['duration']) && $columns['duration'] < $duration && is_numeric($columns['duration'])) {
 				$duration = intval($parts[$columns['duration']]);
 			}
 			

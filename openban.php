@@ -102,7 +102,7 @@ while($row = $result->fetch_row()) {
 		echo "$id\t$name\t$server\t$ip\t$reason";
 		
 		if($extendedMode) {
-			echo "\t" . escapeBan($row[6]) . "\t" . escapeBan($row[7]) . "\t" . escapeBan($row[8]);
+			echo "\t" . escapeBan($row[6]) . "\t" . escapeBan($row[7]) . "\t" . escapeBan(round($row[8]));
 		}
 		
 		echo "\n";
