@@ -105,7 +105,7 @@ while($row = $result->fetch_row()) {
 			echo escapeBan($row[6]) . "\t" . escapeBan($row[7]) . "\t" . escapeBan($row[8]);
 		}
 		
-		echo "\n"
+		echo "\n";
 	} else {
 		echo "*delete:" . $row[0] . "\n";
 	}
