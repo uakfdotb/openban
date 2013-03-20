@@ -68,7 +68,7 @@ while($row = $result->fetch_array()) {
 			//take care of duplicates
 			$db->query("DELETE FROM bans WHERE openban_target = '$target' AND openban_id = '$id'");
 			
-			$db->query("INSERT INTO bans (botid, server, name, ip, date, gamename, admin, reason, context, expiredate, openban_target, openban_id) VALUES ('{$config['botid']}', '$server', '$name', '$ip', NOW(), '', '', '$reason', 'ttr.cloud', DATE_ADD(NOW(), INTERVAL 1 YEAR), '$target', '$id')");
+			$db->query("INSERT INTO bans (botid, server, name, ip, date, gamename, admin, reason, expiredate, openban_target, openban_id) VALUES ('{$config['botid']}', '$server', '$name', '$ip', NOW(), '', '', '$reason', DATE_ADD(NOW(), INTERVAL 1 YEAR), '$target', '$id')");
 		} else {
 			echo "Invalid line: $line.\n";
 		}
