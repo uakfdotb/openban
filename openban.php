@@ -6,6 +6,7 @@ include("common.php");
 $exportLimit = $config['exportLimit'];
 $exportLimitRolling = $config['exportLimitRolling'];
 $restrictHTTPS = $config['restrictHTTPS'];
+$extendedMode = $config['extendedMode'];
 
 if(!isset($_REQUEST['action'])) {
 	die('No action specified.');
@@ -64,14 +65,26 @@ $db->query("DELETE FROM openban_cache WHERE status = '1' AND time < '" . ($new_t
 
 //* get the new bans
 
+$extendedSelect = "";
+
+if($extendedMode) {
+	$extendedSelect = ", gamename, admin, (expiredate - NOW()) / 60";
+}
+
 if($last_time != 0) { //if they have updated already, only get new updates
-	$result = $db->query("SELECT banid, name, server, ip, reason, status FROM openban_cache LEFT JOIN bans ON id = banid WHERE (status = 1 OR (expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL)) AND time >= '$last_time'");
+	$result = $db->query("SELECT banid, name, server, ip, reason, status$extendedSelect FROM openban_cache LEFT JOIN bans ON id = banid WHERE (status = 1 OR (expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL)) AND time >= '$last_time'");
 } else {
-	$result = $db->query("SELECT id, name, server, ip, reason, 0 FROM bans WHERE expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL ORDER BY id");
+	$result = $db->query("SELECT id, name, server, ip, reason, 0$extendedSelect FROM bans WHERE expiredate > DATE_ADD(NOW(), INTERVAL 12 HOUR) AND openban_target IS NULL ORDER BY id");
 }
 
 echo "*success:export\n";
-echo "*cols:id\tname\tserver\tip\treason\n";
+echo "*cols:id\tname\tserver\tip\treason";
+
+if($extendedMode) {
+	echo "\tgamename\tadmin\tduration";
+}
+
+echo "\n";
 echo "*time:$new_time\n";
 
 while($row = $result->fetch_row()) {
@@ -86,7 +99,13 @@ while($row = $result->fetch_row()) {
 			$reason = "none";
 		}
 	
-		echo "$id\t$name\t$server\t$ip\t$reason\n";
+		echo "$id\t$name\t$server\t$ip\t$reason";
+		
+		if($extendedMode) {
+			echo escapeBan($row[6]) . "\t" . escapeBan($row[7]) . "\t" . escapeBan($row[8]);
+		}
+		
+		echo "\n"
 	} else {
 		echo "*delete:" . $row[0] . "\n";
 	}

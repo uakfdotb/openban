@@ -13,6 +13,9 @@ $config['exportLimitRolling'] = 60;
 //only allow HTTPS connections
 $config['restrictHTTPS'] = true;
 
+//whether to operate in extended mode (include gamename, admin, and other optional information)
+$config['extendedMode'] = true;
+
 //database settings
 $config['db_name'] = "ghost";
 $config['db_host'] = "localhost";
