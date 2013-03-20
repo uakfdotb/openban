@@ -7,7 +7,7 @@ if($db->connect_error) {
 }
 
 function escape($str) {
-	return mysql_real_escape_string($str);
+	return $GLOBALS['db']->real_escape_string($str);
 }
 
 function escapeBan($str) {

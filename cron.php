@@ -51,7 +51,7 @@ while($row = $result->fetch_array()) {
 		} else if(substr($line, 0, 6) == "*time:") {
 			$last_export = escape(substr($line, 6));
 			$db->query("UPDATE openban_targets SET last_export = '$last_export' WHERE id = '$target_id'");
-		} else if(substr($line, 0, 1) != "*") {
+		} else if(substr($line, 0, 1) != "*" && isset($columns)) {
 			$parts = explode("\t", trim($line));
 	
 			if(count($parts) != count($columns)) {
@@ -59,13 +59,15 @@ while($row = $result->fetch_array()) {
 				continue;
 			}
 	
-			$id = escape($parts[$column['id']]);
-			$name = escape($parts[$column['name']]);
-			$server = escape($parts[$column['server']]);
-			$ip = escape($parts[$column['ip']]);
-			$reason = escape($parts[$column['reason']]);
+			$id = escape($parts[$columns['id']]);
+			$name = escape($parts[$columns['name']]);
+			$server = escape($parts[$columns['server']]);
+			$ip = escape($parts[$columns['ip']]);
+			$reason = escape($parts[$columns['reason']]);
 	
 			$db->query("INSERT INTO bans (botid, server, name, ip, date, gamename, admin, reason, context, expiredate, openban_target, openban_id) VALUES ('{$config['botid']}', '$server', '$name', '$ip', NOW(), '', '', '$reason', 'ttr.cloud', DATE_ADD(NOW(), INTERVAL 1 YEAR), '$target', '$id')");
+		} else {
+			echo "Invalid line: $line.\n";
 		}
 	}
 	
