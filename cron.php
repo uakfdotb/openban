@@ -71,9 +71,9 @@ while($row = $result->fetch_array()) {
 			$duration = 60 * 24 * 365; //in minutes; default to a year in case not specified
 			
 			if(isset($columns['gamename'])) {
-				$gamename = $parts[$columns['gamename']];
+				$gamename = escape($parts[$columns['gamename']]);
 			} else if(isset($columns['admin'])) {
-				$admin = $parts[$columns['admin']];
+				$admin = escape($parts[$columns['admin']]);
 			} else if(isset($columns['duration']) && $columns['duration'] < $duration && is_numeric($columns['duration'])) {
 				$duration = intval($parts[$columns['duration']]);
 			}
@@ -81,7 +81,7 @@ while($row = $result->fetch_array()) {
 			//take care of duplicates
 			$db->query("DELETE FROM bans WHERE openban_target = '$target' AND openban_id = '$id'");
 			
-			$db->query("INSERT INTO bans (botid, server, name, ip, date, gamename, admin, reason, expiredate, openban_target, openban_id) VALUES ('{$config['botid']}', '$server', '$name', '$ip', NOW(), '', '', '$reason', DATE_ADD(NOW(), INTERVAL $duration MINUTES), '$target', '$id')");
+			$db->query("INSERT INTO bans (botid, server, name, ip, date, gamename, admin, reason, expiredate, openban_target, openban_id) VALUES ('{$config['botid']}', '$server', '$name', '$ip', NOW(), '$gamename', '$admin', '$reason', DATE_ADD(NOW(), INTERVAL $duration MINUTE), '$target', '$id')");
 		} else {
 			echo "Invalid line: $line.\n";
 		}
