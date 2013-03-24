@@ -41,7 +41,7 @@ while($row = $result->fetch_array()) {
 				$columns[trim($column)] = $i;
 			}
 	
-			if(!isset($column['name']) || !isset($column['server']) || !isset($column['ip']) || !isset($column['reason']) || !isset($column['id'])) {
+			if(!isset($columns['name']) || !isset($columns['server']) || !isset($columns['ip']) || !isset($columns['reason']) || !isset($columns['id'])) {
 				echo "Error: missing some columns: $line.\n";
 				break;
 			}
